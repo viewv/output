@@ -9,6 +9,8 @@ client = Groq(
     api_key=Config.GROQ_API_KEY
 )
 
+prompt = input("Enter your prompt: ")
+
 chat_completion = client.chat.completions.create(
     messages=[
         {
@@ -17,7 +19,8 @@ chat_completion = client.chat.completions.create(
         },
         {
             "role": "user",
-            "content": "Generate the Python code to execute the command: 'dscl . list /Users'",
+            # "content": "Generate the Python code to execute the command: 'dscl . list /Users'",
+            "content": prompt,
         }
     ],
     model="llama3-8b-8192",
