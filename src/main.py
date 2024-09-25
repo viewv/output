@@ -1,3 +1,5 @@
+import re
+
 from groq import Groq
 from config import Config
 
@@ -15,13 +17,26 @@ chat_completion = client.chat.completions.create(
         },
         {
             "role": "user",
-            "content": "Generate the Python code to output Hello World, Only output the code",
+            "content": "Generate the Python code to execute the command: 'dscl . list /Users'",
         }
     ],
     model="llama3-8b-8192",
 )
 
-print(chat_completion.choices[0].message.content)
+# print(chat_completion.choices[0].message.content)
 
-code = chat_completion.choices[0].message.content
-exec(code)
+original_string = chat_completion.choices[0].message.content
+
+# Extract the code using regular expressions
+code_match = re.search(r'```(?:python)?\n(.*?)```',
+                       original_string, re.DOTALL | re.IGNORECASE)
+
+if code_match:
+    extracted_code = code_match.group(1)
+    print("Extracted code:")
+    print(extracted_code)
+
+    print("\nExecuting the extracted code:\n")
+    exec(extracted_code)
+else:
+    print("No Python code found in the string.")
