@@ -1,4 +1,5 @@
 import re
+import execnet
 
 from groq import Groq
 from config import Config
@@ -26,9 +27,8 @@ chat_completion = client.chat.completions.create(
     model="llama3-8b-8192",
 )
 
-# print(chat_completion.choices[0].message.content)
-
 original_string = chat_completion.choices[0].message.content
+# print("\nOriginal string:\n", original_string)
 
 # Extract the code using regular expressions
 code_match = re.search(r'```(?:python)?\n(.*?)```',
@@ -36,10 +36,17 @@ code_match = re.search(r'```(?:python)?\n(.*?)```',
 
 if code_match:
     extracted_code = code_match.group(1)
-    print("Extracted code:")
+    print("Executing the extracted code:")
     print(extracted_code)
 
-    print("\nExecuting the extracted code:\n")
-    exec(extracted_code)
+    # exec(extracted_code)
+
+    print("\nExecuting the extracted code without exec:")
+    gateway = execnet.makegateway()
+    channel = gateway.remote_exec(
+        extracted_code + "\n\nchannel.send(message)\n")
+    result = channel.receive()
+    print(f"Result from remote execution: {result}")
+
 else:
     print("No Python code found in the string.")
