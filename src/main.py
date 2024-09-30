@@ -20,7 +20,7 @@ chat_completion = client.chat.completions.create(
         },
         {
             "role": "user",
-            # "content": "Generate the Python code to execute the command: 'dscl . list /Users'",
+            # "content": "Generate the Python code to execute the shell command: 'dscl . list /Users' and store the output into a value named message.",
             "content": prompt,
         }
     ],
